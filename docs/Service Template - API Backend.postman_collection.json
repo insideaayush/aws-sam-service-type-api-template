@@ -1,0 +1,208 @@
+{
+	"info": {
+		"_postman_id": "cc1bfbf7-accc-49db-81e5-2085a8452855",
+		"name": "Service Template - API Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Ping",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ServiceBaseURL}}/{{API_VERSION}}/ping",
+					"host": [
+						"{{ServiceBaseURL}}"
+					],
+					"path": [
+						"{{API_VERSION}}",
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a todo item",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \n    \"id\": \"fed47f82-0322-4462-8f45-31bccc6ce062\",\n    \"title\": \"Create a new template repo\",\n    \"body\": \"this will create a template repo for aws sam related repos\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ServiceBaseURL}}/{{API_VERSION}}/todos",
+					"host": [
+						"{{ServiceBaseURL}}"
+					],
+					"path": [
+						"{{API_VERSION}}",
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a todo item",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ServiceBaseURL}}/{{API_VERSION}}/todos/:todo-id",
+					"host": [
+						"{{ServiceBaseURL}}"
+					],
+					"path": [
+						"{{API_VERSION}}",
+						"todos",
+						":todo-id"
+					],
+					"variable": [
+						{
+							"key": "todo-id",
+							"value": "fed47f82-0322-4462-8f45-31bccc6ce062"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all todo items",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ServiceBaseURL}}/{{API_VERSION}}/todos",
+					"host": [
+						"{{ServiceBaseURL}}"
+					],
+					"path": [
+						"{{API_VERSION}}",
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a todo item",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"updated title\",\n    \"body\": \"updated body\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ServiceBaseURL}}/{{API_VERSION}}/todos/:todo-id",
+					"host": [
+						"{{ServiceBaseURL}}"
+					],
+					"path": [
+						"{{API_VERSION}}",
+						"todos",
+						":todo-id"
+					],
+					"variable": [
+						{
+							"key": "todo-id",
+							"value": "fed47f82-0322-4462-8f45-31bccc6ce062"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a todo item",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{ServiceBaseURL}}/{{API_VERSION}}/todos/:todo-id",
+					"host": [
+						"{{ServiceBaseURL}}"
+					],
+					"path": [
+						"{{API_VERSION}}",
+						"todos",
+						":todo-id"
+					],
+					"variable": [
+						{
+							"key": "todo-id",
+							"value": "fed47f82-0322-4462-8f45-31bccc6ce062"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "CGmnkVb3P64p4ZFmaKghs5rCDcDY3pXx535yopPS",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "X-Api-Key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ServiceBaseURL",
+			"value": "https://api-backend-template.api.sandbox.godscilla.com/api",
+			"type": "string"
+		},
+		{
+			"key": "API_VERSION",
+			"value": "v1",
+			"type": "string"
+		},
+		{
+			"key": "api_key",
+			"value": "CGmnkVb3P64p4ZFmaKghs5rCDcDY3pXx535yopPS",
+			"type": "string"
+		}
+	]
+}

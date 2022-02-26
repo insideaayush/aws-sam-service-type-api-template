@@ -1,0 +1,12 @@
+version = 0.1
+[sandbox]
+[sandbox.deploy]
+[sandbox.deploy.parameters]
+stack_name = "api-backend-template"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-gvy7t4xjpzo4"
+s3_prefix = "api-backend-template"
+region = "ap-southeast-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "EnvType=\"dev\" DomainName=\"api-backend-template.api.sandbox.godscilla.com\" CertArn=\"arn:aws:acm:ap-southeast-1:893480381680:certificate/f2fc18f1-80a2-44c2-a1c5-129ee80e6e1e\" HostedZoneID=\"Z07988668V6DLANQY1K4\""
+image_repositories = []

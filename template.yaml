@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  service-type-api-backend
+  
+  Sample SAM Template for service-type-api-backend
+
+Parameters:
+  EnvType:
+    Description: Environment type.
+    Type: String
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+  DomainName:
+    Type: String
+    Default: api.some.com
+  CertArn:
+    Type: String
+    Default: some-arn
+  HostedZoneID:
+    Type: String
+    Default: Z0NE1D
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 5
+  Api:
+    Cors:
+      AllowHeaders: "'Accept, Authorization, Content-Type, Cache-Control, pragma, Expires, Origin, x-client-id, x-request-id'"
+      AllowOrigin: "'*'"
+    Domain:
+      DomainName: !Ref DomainName
+      CertificateArn: !Ref CertArn
+      EndpointConfiguration: "REGIONAL"
+      Route53:
+        HostedZoneId: !Ref HostedZoneID
+        EvaluateTargetHealth: true
+
+Resources:
+  ServiceTemplateRestAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Join ["-", [service-template-api, !Ref EnvType]]
+      StageName: !Ref EnvType
+      
+  ServiceTemplateFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Tags:
+        project: "aws-sam-service-templates"
+        component: "api-backend"
+      CodeUri: cmd/api/
+      Handler: main
+      Runtime: go1.x
+      Architectures:
+        - x86_64
+      Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+      Events:
+        CatchAll:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref ServiceTemplateRestAPI
+            Path: /{proxy+}
+            Method: any
+            Auth:
+              ApiKeyRequired: true
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables:
+          EnvType: !Ref EnvType
+          Region: !Ref AWS::Region
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Join ["-", [api-backend-template, !Ref EnvType]]
+  
+  ServiceTemplateRestAPIKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: !Join ["-", [service-template-api-key, !Ref EnvType]]
+      Description: Service Template API Key
+      Enabled: "true"
+      StageKeys:
+        - RestApiId:
+            Ref: ServiceTemplateRestAPI
+          StageName:
+            Ref: ServiceTemplateRestAPI.Stage
+
+  ServiceTemplateUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId:
+            Ref: ServiceTemplateRestAPI
+          Stage:
+            Ref: ServiceTemplateRestAPI.Stage
+      Description: Service Template API usage plan
+      UsagePlanName: !Join ["-", [service-template, !Ref EnvType]]
+
+  ServiceTemplateUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref ServiceTemplateRestAPIKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: ServiceTemplateUsagePlan
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ServiceTemplateAPI:
+    Description: "API Gateway endpoint URL for Prod environment for First Function"
+    Value: !Sub "https://${ServiceTemplateRestAPI}.execute-api.${AWS::Region}.amazonaws.com/dev/api/ping"
+  ServiceTemplateFunction:
+    Description: "First Lambda Function ARN"
+    Value: !GetAtt ServiceTemplateFunction.Arn
+  ServiceTemplateFunctionIamRole:
+    Description: "Implicit IAM Role created for Service Template function"
+    Value: !GetAtt ServiceTemplateFunctionRole.Arn
